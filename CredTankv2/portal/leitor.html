@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CredTank | Leitor do posto</title>
+    <link rel="icon" href="../assets/credtank-logo.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../icon-192.png" />
+    <link rel="manifest" href="../manifest.json" />
+    <meta name="theme-color" content="#1aa06d" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f5f1e9;
+        --surface: #ffffff;
+        --ink: #0f172a;
+        --muted: #5a6677;
+        --accent: #1aa06d;
+        --accent-strong: #0b6b4a;
+        --accent-soft: rgba(26, 160, 109, 0.15);
+        --warm: #ff8a3d;
+        --danger: #d64545;
+        --stroke: #e3dacd;
+        --shadow: 0 20px 50px rgba(15, 23, 42, 0.14);
+        --radius-xl: 24px;
+        --radius-lg: 18px;
+        --radius-md: 12px;
+        --radius-sm: 10px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Space Grotesk", "Sora", sans-serif;
+        background: radial-gradient(circle at top right, rgba(26, 160, 109, 0.18), transparent 55%),
+          radial-gradient(circle at bottom left, rgba(255, 138, 61, 0.2), transparent 50%),
+          var(--bg);
+        color: var(--ink);
+        min-height: 100vh;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .app-header {
+        position: sticky;
+        top: 0;
+        background: rgba(245, 241, 233, 0.9);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(227, 218, 205, 0.8);
+        z-index: 10;
+      }
+
+      .app-header .wrap {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 20px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+      }
+
+      .brand-logo {
+        height: 64px;
+        width: auto;
+        object-fit: contain;
+      }
+
+      .logo-text {
+        display: grid;
+        gap: 2px;
+      }
+
+      .logo-title {
+        font-size: 18px;
+      }
+
+      .logo-subtitle {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: var(--accent-strong);
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--accent-soft);
+        color: var(--accent-strong);
+        border-radius: 999px;
+        padding: 6px 14px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+      }
+
+      .app-main {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 30px 24px 80px;
+        display: grid;
+        gap: 22px;
+      }
+
+      .card {
+        background: var(--surface);
+        border-radius: var(--radius-xl);
+        padding: 24px;
+        border: 1px solid var(--stroke);
+        box-shadow: var(--shadow);
+        display: grid;
+        gap: 18px;
+      }
+
+      .card h1 {
+        font-size: clamp(24px, 3vw, 32px);
+      }
+
+      .card h2,
+      .card h3 {
+        font-size: 20px;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+      }
+
+      .field label {
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      .field input,
+      .field select,
+      .field textarea {
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--stroke);
+        font-family: inherit;
+        font-size: 14px;
+      }
+
+      .field select:disabled {
+        background: rgba(15, 23, 42, 0.04);
+        color: var(--muted);
+      }
+
+      .field textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .btn {
+        padding: 10px 16px;
+        border-radius: 999px;
+        border: 1px solid var(--stroke);
+        background: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .btn.primary {
+        background: var(--accent);
+        color: #fff;
+        border-color: transparent;
+        box-shadow: 0 16px 30px rgba(26, 160, 109, 0.25);
+      }
+
+      .btn.ghost {
+        background: transparent;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .status {
+        padding: 10px 12px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 13px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .status.ok {
+        background: rgba(26, 160, 109, 0.16);
+        color: var(--accent-strong);
+      }
+
+      .status.warn {
+        background: rgba(255, 138, 61, 0.2);
+        color: #9b4b1f;
+      }
+
+      .status.bad {
+        background: rgba(214, 69, 69, 0.18);
+        color: var(--danger);
+      }
+
+      .status-tag {
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+      }
+
+      .status-tag.warn {
+        background: rgba(255, 138, 61, 0.18);
+        color: #9b4b1f;
+      }
+
+      .status-tag.ok {
+        background: rgba(26, 160, 109, 0.16);
+        color: var(--accent-strong);
+      }
+
+      .page-head {
+        display: grid;
+        gap: 10px;
+      }
+
+      .page-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .leitor-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr);
+        gap: 20px;
+        align-items: start;
+      }
+
+      .right-stack {
+        display: grid;
+        gap: 16px;
+      }
+
+      .scanner-frame {
+        position: relative;
+        border-radius: var(--radius-lg);
+        background: #0f172a;
+        padding: 12px;
+        min-height: 280px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+      }
+
+      .scanner-frame video {
+        width: 100%;
+        height: 100%;
+        border-radius: 12px;
+        object-fit: cover;
+        background: #0b1020;
+      }
+
+      .scanner-overlay {
+        position: absolute;
+        inset: 14%;
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        border-radius: 16px;
+        box-shadow: 0 0 0 999px rgba(15, 23, 42, 0.35);
+        pointer-events: none;
+      }
+
+      .scanner-hint {
+        position: absolute;
+        bottom: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(15, 23, 42, 0.7);
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+      }
+
+      .scanner-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .scanner-canvas {
+        display: none;
+      }
+
+      .token-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .message {
+        font-size: 13px;
+        color: var(--muted);
+        min-height: 18px;
+      }
+
+      .message.ok {
+        color: var(--accent-strong);
+      }
+
+      .message.bad {
+        color: var(--danger);
+      }
+
+      .result-card {
+        border-radius: var(--radius-lg);
+        padding: 16px;
+        border: 1px solid var(--stroke);
+        background: #fff;
+        display: grid;
+        gap: 12px;
+      }
+
+      .result-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .result-amount {
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      .result-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 10px;
+      }
+
+      .result-grid span {
+        font-size: 12px;
+        color: var(--muted);
+        display: block;
+      }
+
+      .result-grid strong {
+        font-size: 14px;
+      }
+
+      .list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .list-item {
+        padding: 12px 14px;
+        border-radius: var(--radius-md);
+        background: rgba(15, 23, 42, 0.03);
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 13px;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      @media (max-width: 980px) {
+        .leitor-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .app-header .wrap {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .btn {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="wrap">
+        <div class="logo">
+          <img class="brand-logo" src="../assets/Logo.png" alt="CredTank" />
+          <div class="logo-text">
+            <div class="logo-title">CREDTANK</div>
+            <div class="logo-subtitle">Leitor do posto</div>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="btn" id="logout-link" type="button">Sair</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <section class="card">
+        <div class="page-head">
+          <h1>Leitura de QR para abastecimento</h1>
+          <p class="muted">
+            Selecione o posto, leia o QR pela camera ou cole o token manualmente para aprovar a transacao.
+          </p>
+        </div>
+        <div class="page-meta">
+          <div class="field">
+            <label for="leitor-posto">Posto selecionado</label>
+            <select id="leitor-posto"></select>
+            <div class="muted hidden" id="leitor-posto-note">Posto fixo para esta maquininha.</div>
+          </div>
+          <span class="status warn" id="scanner-status">Camera desligada</span>
+        </div>
+        <div class="message" id="scanner-msg"></div>
+      </section>
+
+      <section class="leitor-grid">
+        <div class="card">
+          <div class="panel-header">
+            <h2>Leitor por camera</h2>
+          </div>
+          <div class="scanner-frame">
+            <video id="scanner-video" muted playsinline></video>
+            <div class="scanner-overlay"></div>
+            <div class="scanner-hint">Alinhe o QR no centro</div>
+          </div>
+          <canvas id="scanner-canvas" class="scanner-canvas" width="640" height="480" aria-hidden="true"></canvas>
+          <div class="scanner-actions">
+            <button class="btn primary" id="scanner-start" type="button">Iniciar camera</button>
+            <button class="btn" id="scanner-stop" type="button" disabled>Parar</button>
+            <label class="btn ghost" for="scanner-file">Ler imagem</label>
+            <input id="scanner-file" class="hidden" type="file" accept="image/*" />
+          </div>
+        </div>
+
+        <div class="right-stack">
+          <div class="card">
+            <div class="panel-header">
+              <h2>Entrada manual</h2>
+            </div>
+            <div class="field">
+              <label for="leitor-combustivel">Tipo de combustivel</label>
+              <select id="leitor-combustivel" required>
+                <option value="" disabled selected>Selecione</option>
+                <option value="Gasolina">Gasolina</option>
+                <option value="Gasolina Aditivada">Gasolina Aditivada</option>
+                <option value="Etanol">Etanol</option>
+                <option value="Diesel S10">Diesel S10</option>
+                <option value="Diesel S500">Diesel S500</option>
+                <option value="GNV">GNV</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="leitor-token">Token do QR</label>
+              <textarea id="leitor-token" placeholder="Cole o token completo para validar"></textarea>
+            </div>
+            <div class="token-actions">
+              <button class="btn primary" id="validar-token">Validar e aprovar</button>
+              <button class="btn" id="limpar-token" type="button">Limpar</button>
+            </div>
+            <div class="message" id="leitor-msg"></div>
+          </div>
+
+          <div class="card">
+            <div class="panel-header">
+              <h2>Resultado da leitura</h2>
+            </div>
+            <div class="result-card">
+              <div class="result-head">
+                <span class="status warn" id="result-status">Aguardando leitura</span>
+                <div class="result-amount" id="result-amount">R$ 0,00</div>
+              </div>
+              <div class="result-grid">
+                <div>
+                  <span>Funcionario</span>
+                  <strong id="result-funcionario">--</strong>
+                </div>
+                <div>
+                  <span>Empresa</span>
+                  <strong id="result-empresa">--</strong>
+                </div>
+                <div>
+                  <span>Posto</span>
+                  <strong id="result-posto">--</strong>
+                </div>
+                <div>
+                  <span>Combustivel</span>
+                  <strong id="result-combustivel">--</strong>
+                </div>
+                <div>
+                  <span>Pagamento</span>
+                  <strong id="result-pagamento">--</strong>
+                </div>
+                <div>
+                  <span>Horario</span>
+                  <strong id="result-horario">--</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h3>Ultimas aprovacoes</h3>
+        <div class="list" id="transacoes-list">
+          <div class="list-item muted">Sem transacoes registradas.</div>
+        </div>
+      </section>
+    </main>
+
+    <script src="../assets/jsqr.js"></script>
+    <script src="../assets/pt-br-fix.js"></script>
+    <script>
+      const formatBRL = (value) =>
+        new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
+
+      const SECRET = "CREDTANK-PORTAL-ASSINATURA";
+      const API_STATE_URL = "../api/state.php";
+      const API_REWARDS_EARN_URL = "../api/rewards/earn.php";
+      const API_REWARDS_BALANCE_URL = "../api/rewards/balance.php";
+      const STORAGE_KEY = "credtank-state";
+      const LAST_TX_KEY = "credtank-last-tx";
+      const broadcastTxChannel =
+        "BroadcastChannel" in window ? new BroadcastChannel("credtank-tx") : null;
+      const IS_DESKTOP_LIKE =
+        window.matchMedia &&
+        (window.matchMedia("(min-width: 1024px)").matches || window.matchMedia("(pointer: fine)").matches);
+      const REALTIME_SYNC_MS = IS_DESKTOP_LIKE ? 8000 : 5000;
+      const TX_STATUS = {
+        PENDING: "pendente_confirmacao",
+        CONFIRMED: "confirmada",
+        DECLINED: "recusada",
+      };
+
+      const demoParam = new URLSearchParams(window.location.search).get("demo");
+      const demoValue = String(demoParam || "").toLowerCase();
+      const isLocalHost =
+        window.location.protocol === "file:" ||
+        ["localhost", "127.0.0.1"].includes(window.location.hostname);
+      const DEMO_MODE = ["1", "true", "on", "sim", "yes"].includes(demoValue);
+      const APP_BUILD_VERSION = "2026-08-13.1";
+
+
+      const DEFAULT_STATE = {
+        limitePadrao: 500,
+        validadeMs: 90 * 1000,
+        empresas: [
+          { id: "E1", nome: "Grupo Horizonte", cnpj: "12.345.678/0001-77", fechamento: "Dia 30", limiteMensal: 500 },
+          { id: "E2", nome: "Logistica Aurora", cnpj: "98.765.432/0001-44", fechamento: "Dia 25", limiteMensal: 500 },
+        ],
+        postos: [
+            {
+              id: "P1",
+              nome: "Posto Solaris",
+              codigoMaquininha: "MQ-1001",
+              codigoAcesso: "1234",
+              cnpj: "12.345.678/0001-90",
+              localizacao: "-23.5505, -46.6333",
+              lat: -23.5505,
+              lng: -46.6333,
+            },
+            {
+              id: "P2",
+              nome: "Posto Vale Norte",
+              codigoMaquininha: "MQ-1002",
+              codigoAcesso: "5678",
+              cnpj: "98.765.432/0001-10",
+              localizacao: "-22.9068, -43.1729",
+              lat: -22.9068,
+              lng: -43.1729,
+            },
+            {
+              id: "P3",
+              nome: "Posto Avenida 7",
+              codigoMaquininha: "MQ-1003",
+              codigoAcesso: "9012",
+              cnpj: "45.678.912/0001-55",
+              localizacao: "-30.0346, -51.2177",
+              lat: -30.0346,
+              lng: -51.2177,
+            },
+        ],
+        funcionarios: [
+          { id: "F1", nome: "Camila Rocha", matricula: "02391", cpf: "123.456.789-10", empresaId: "E1", ativo: true },
+          { id: "F2", nome: "Joao Menezes", matricula: "04122", cpf: "987.654.321-11", empresaId: "E1", ativo: true },
+          { id: "F3", nome: "Marina Alves", matricula: "05550", cpf: "741.852.963-10", empresaId: "E2", ativo: true },
+        ],
+        usuarios: [
+          { id: "U1", nome: "Ana Souza", email: "admin@gwl.com", senha: "admin123", role: "admin" },
+          {
+            id: "U2",
+            nome: "Grupo Horizonte",
+            email: "empresa@horizonte.com",
+            senha: "123456",
+            role: "empresa",
+            empresaId: "E1",
+          },
+        ],
+        colaboradoresAuth: [
+          { id: "C1", funcionarioId: "F1", cpf: "12345678910", senha: "123456" },
+        ],
+        transacoes: [],
+        logs: [],
+      };
+
+      if (!DEMO_MODE) {
+        DEFAULT_STATE.empresas = [];
+        DEFAULT_STATE.postos = [];
+        DEFAULT_STATE.funcionarios = [];
+        DEFAULT_STATE.usuarios = [];
+        DEFAULT_STATE.colaboradoresAuth = [];
+      }
+
+      const state = {
+        limitePadrao: DEFAULT_STATE.limitePadrao,
+        validadeMs: DEFAULT_STATE.validadeMs,
+        empresas: JSON.parse(JSON.stringify(DEFAULT_STATE.empresas)),
+        postos: JSON.parse(JSON.stringify(DEFAULT_STATE.postos)),
+        funcionarios: JSON.parse(JSON.stringify(DEFAULT_STATE.funcionarios)),
+        usuarios: JSON.parse(JSON.stringify(DEFAULT_STATE.usuarios)),
+        colaboradoresAuth: JSON.parse(JSON.stringify(DEFAULT_STATE.colaboradoresAuth)),
+        transacoes: [],
+        logs: [],
+        usedTokens: new Set(),
+        lastTxId: null,
+        scanner: {
+          active: false,
+          stream: null,
+          rafId: null,
+          lastValue: "",
+          cooldownUntil: 0,
+        },
+      };
+
+      let lastSavedPayload = "";
+
+      const initialPostoId = (() => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("posto")) {
+          const postoParam = params.get("posto");
+          try {
+            sessionStorage.setItem("maquininhaPostoId", postoParam);
+          } catch (error) {
+          }
+          return postoParam;
+        }
+        try {
+          return sessionStorage.getItem("maquininhaPostoId") || "";
+        } catch (error) {
+          return "";
+        }
+      })();
+
+      const elements = {
+        logoutBtn: document.getElementById("logout-link"),
+        leitorPosto: document.getElementById("leitor-posto"),
+        leitorPostoNote: document.getElementById("leitor-posto-note"),
+        leitorCombustivel: document.getElementById("leitor-combustivel"),
+        leitorToken: document.getElementById("leitor-token"),
+        validarToken: document.getElementById("validar-token"),
+        limparToken: document.getElementById("limpar-token"),
+        leitorMsg: document.getElementById("leitor-msg"),
+        resultStatus: document.getElementById("result-status"),
+        resultAmount: document.getElementById("result-amount"),
+        resultFuncionario: document.getElementById("result-funcionario"),
+        resultEmpresa: document.getElementById("result-empresa"),
+        resultPosto: document.getElementById("result-posto"),
+        resultCombustivel: document.getElementById("result-combustivel"),
+        resultPagamento: document.getElementById("result-pagamento"),
+        resultHorario: document.getElementById("result-horario"),
+        transacoesList: document.getElementById("transacoes-list"),
+        scannerVideo: document.getElementById("scanner-video"),
+        scannerCanvas: document.getElementById("scanner-canvas"),
+        scannerStart: document.getElementById("scanner-start"),
+        scannerStop: document.getElementById("scanner-stop"),
+        scannerStatus: document.getElementById("scanner-status"),
+        scannerMsg: document.getElementById("scanner-msg"),
+        scannerFile: document.getElementById("scanner-file"),
+      };
+
+      const parseDate = (value) => {
+        if (value instanceof Date) return value;
+        const parsed = new Date(value);
+        return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+      };
+
+      const normalizeTransacoes = (entries) =>
+        (Array.isArray(entries) ? entries : []).map((tx) => ({
+          ...tx,
+          status: tx.status || TX_STATUS.CONFIRMED,
+          paymentSource: normalizePaymentSource(tx.paymentSource || tx.payment_source),
+          timestamp: parseDate(tx.timestamp),
+        }));
+
+      const normalizeLogs = (entries) =>
+        (Array.isArray(entries) ? entries : []).map((log) => ({
+          ...log,
+          timestamp: parseDate(log.timestamp),
+        }));
+
+      function applyStateSnapshot(snapshot) {
+        const safe = snapshot && typeof snapshot === "object" ? snapshot : {};
+        const fallback = JSON.parse(JSON.stringify(DEFAULT_STATE));
+        state.limitePadrao = Number.isFinite(safe.limitePadrao) ? safe.limitePadrao : fallback.limitePadrao;
+        state.validadeMs = Number.isFinite(safe.validadeMs) ? safe.validadeMs : fallback.validadeMs;
+        state.empresas = Array.isArray(safe.empresas) ? safe.empresas : fallback.empresas;
+        state.postos = Array.isArray(safe.postos) ? safe.postos : fallback.postos;
+        state.funcionarios = Array.isArray(safe.funcionarios) ? safe.funcionarios : fallback.funcionarios;
+        state.usuarios = Array.isArray(safe.usuarios) ? safe.usuarios : fallback.usuarios;
+        state.colaboradoresAuth = Array.isArray(safe.colaboradoresAuth)
+          ? safe.colaboradoresAuth
+          : fallback.colaboradoresAuth;
+        state.transacoes = normalizeTransacoes(
+          Array.isArray(safe.transacoes) ? safe.transacoes : fallback.transacoes
+        );
+        state.logs = normalizeLogs(Array.isArray(safe.logs) ? safe.logs : fallback.logs);
+      }
+
+      function getPersistableState() {
+        return {
+          limitePadrao: state.limitePadrao,
+          validadeMs: state.validadeMs,
+          empresas: state.empresas,
+          postos: state.postos,
+          funcionarios: state.funcionarios,
+          usuarios: state.usuarios,
+          colaboradoresAuth: state.colaboradoresAuth,
+          transacoes: state.transacoes,
+          logs: state.logs,
+        };
+      }
+
+      function getStateSignature(snapshot) {
+        try {
+          const base = snapshot && typeof snapshot === "object" ? snapshot : getPersistableState();
+          return JSON.stringify(base);
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function saveStateToStorage(payload) {
+        try {
+          localStorage.setItem(STORAGE_KEY, payload);
+          return true;
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function loadStateFromStorage() {
+        const beforeSignature = getStateSignature();
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return false;
+          const parsed = JSON.parse(raw);
+          applyStateSnapshot(parsed);
+          return beforeSignature !== getStateSignature();
+        } catch (error) {
+          return false;
+        }
+      }
+
+      async function saveStateToServer(payload) {
+        const response = await fetch(API_STATE_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: payload,
+        });
+        return response.ok;
+      }
+
+      async function queueStateSave(force = false) {
+        const payload = JSON.stringify(getPersistableState());
+        if (!force && payload === lastSavedPayload) return true;
+        lastSavedPayload = payload;
+        if (window.location.protocol === "file:") {
+          return saveStateToStorage(payload);
+        }
+        try {
+          const ok = await saveStateToServer(payload);
+          saveStateToStorage(payload);
+          return ok;
+        } catch (error) {
+          saveStateToStorage(payload);
+          return false;
+        }
+      }
+
+      function statusClass(status) {
+        if (status === "ok") return "status ok";
+        if (status === "bad") return "status bad";
+        return "status warn";
+      }
+
+      function forceBuildRefreshIfNeeded() {
+        try {
+          const key = "credtank-build-version";
+          const current = localStorage.getItem(key);
+          if (current === APP_BUILD_VERSION) return;
+          localStorage.setItem(key, APP_BUILD_VERSION);
+          if ("serviceWorker" in navigator && navigator.serviceWorker.getRegistrations) {
+            navigator.serviceWorker.getRegistrations().then((regs) => {
+              regs.forEach((reg) => reg.update());
+            });
+          }
+        } catch (error) {
+        }
+      }
+
+      function setMessage(el, text, type = "muted") {
+        if (!el) return;
+        el.textContent = text;
+        el.className = `message ${type}`;
+      }
+
+      function setResultStatus(text, status) {
+        elements.resultStatus.textContent = text;
+        elements.resultStatus.className = statusClass(status);
+      }
+
+      function setScannerStatus(text, status) {
+        elements.scannerStatus.textContent = text;
+        elements.scannerStatus.className = statusClass(status);
+      }
+
+      function setScannerControls(active) {
+        elements.scannerStart.disabled = active;
+        elements.scannerStop.disabled = !active;
+      }
+
+      function fillSelect(select, items, labelFn, selectedValue = "") {
+        select.innerHTML = "";
+        items.forEach((item) => {
+          const option = document.createElement("option");
+          option.value = item.id;
+          option.textContent = labelFn(item);
+          if (selectedValue && selectedValue === item.id) {
+            option.selected = true;
+          }
+          select.appendChild(option);
+        });
+      }
+
+      function applyInitialPosto() {
+        if (!initialPostoId) return;
+        const exists = state.postos.some((posto) => posto.id === initialPostoId);
+        if (!exists) return;
+        const current = elements.leitorPosto.value;
+        if (current === initialPostoId) return;
+        elements.leitorPosto.value = initialPostoId;
+        try {
+          sessionStorage.setItem("maquininhaPostoId", initialPostoId);
+        } catch (error) {
+          return;
+        }
+      }
+
+      function applyPostoLock() {
+        const locked = Boolean(initialPostoId && state.postos.some((posto) => posto.id === initialPostoId));
+        elements.leitorPosto.disabled = locked;
+        if (elements.leitorPostoNote) {
+          elements.leitorPostoNote.classList.toggle("hidden", !locked);
+        }
+      }
+
+      function getPosto(id) {
+        return state.postos.find((p) => p.id === id);
+      }
+
+      function getEmpresa(id) {
+        return state.empresas.find((e) => e.id === id);
+      }
+
+      function getFuncionario(id) {
+        return state.funcionarios.find((f) => f.id === id);
+      }
+
+      function normalizePaymentSource(value) {
+        const source = String(value || "").toLowerCase();
+        if (source === "cashback") return "cashback";
+        if (source === "credito") return "credito";
+        return "indefinido";
+      }
+
+      function paymentSourceLabel(value) {
+        const source = normalizePaymentSource(value);
+        if (source === "cashback") return "Cashback";
+        if (source === "credito") return "Credito normal";
+        return "Indefinido";
+      }
+
+      function generateId(prefix) {
+        return `${prefix}-${Date.now().toString(36).toUpperCase()}`;
+      }
+
+      function logEvent(action, detail) {
+        state.logs.unshift({
+          id: generateId("LOG"),
+          action,
+          detail,
+          timestamp: new Date(),
+        });
+      }
+
+      function base64Decode(text) {
+        const binary = atob(text);
+        const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+        return new TextDecoder().decode(bytes);
+      }
+
+      async function signPayload(payload) {
+        const base = JSON.stringify(payload) + SECRET;
+        if (!window.crypto || !crypto.subtle || !crypto.subtle.digest) {
+          let hash = 0;
+          for (let i = 0; i < base.length; i += 1) {
+            hash = (hash << 5) - hash + base.charCodeAt(i);
+          }
+          const fallback = hash.toString(16).padStart(8, "0");
+          return `${fallback}${fallback}`.slice(0, 16);
+        }
+        const encoder = new TextEncoder();
+        const data = encoder.encode(base);
+        const hash = await crypto.subtle.digest("SHA-256", data);
+        const bytes = Array.from(new Uint8Array(hash));
+        return bytes.map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 16);
+      }
+
+      function formatTime(ts) {
+        if (!ts) return "--";
+        const date = new Date(ts);
+        if (Number.isNaN(date.getTime())) return "--";
+        return date.toLocaleString("pt-BR", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" });
+      }
+
+      function resetResult() {
+        setResultStatus("Aguardando leitura", "warn");
+        elements.resultAmount.textContent = "R$ 0,00";
+        elements.resultFuncionario.textContent = "--";
+        elements.resultEmpresa.textContent = "--";
+        elements.resultPosto.textContent = "--";
+        elements.resultCombustivel.textContent = "--";
+        elements.resultPagamento.textContent = "--";
+        elements.resultHorario.textContent = "--";
+      }
+
+      function updateResult(payload, status, message, combustivel = "") {
+        setResultStatus(message, status);
+        if (!payload) {
+          elements.resultAmount.textContent = "R$ 0,00";
+          elements.resultFuncionario.textContent = "--";
+          elements.resultEmpresa.textContent = "--";
+          elements.resultPosto.textContent = "--";
+          elements.resultCombustivel.textContent = "--";
+          elements.resultPagamento.textContent = "--";
+          elements.resultHorario.textContent = "--";
+          return;
+        }
+        const funcionario = getFuncionario(payload.funcionario_id);
+        const empresa = getEmpresa(payload.empresa_id);
+        const posto = getPosto(payload.posto_id);
+        const combustivelLabel = combustivel || payload.combustivel || "--";
+        const paymentSource = normalizePaymentSource(payload.payment_source || payload.paymentSource);
+        elements.resultAmount.textContent = formatBRL(payload.valor);
+        elements.resultFuncionario.textContent = funcionario?.nome || payload.funcionario_id || "--";
+        elements.resultEmpresa.textContent = empresa?.nome || payload.empresa_id || "--";
+        elements.resultPosto.textContent = posto?.nome || payload.posto_id || "--";
+        elements.resultCombustivel.textContent = combustivelLabel;
+        elements.resultPagamento.textContent = paymentSourceLabel(paymentSource);
+        elements.resultHorario.textContent = formatTime(payload.ts);
+      }
+
+      function updateResultFromTx(tx) {
+        if (!tx) return;
+        const funcionario = getFuncionario(tx.funcionarioId);
+        const empresa = getEmpresa(tx.empresaId);
+        const posto = getPosto(tx.postoId);
+        let statusText = "CONFIRMADA";
+        let statusType = "ok";
+        if (tx.status === TX_STATUS.PENDING) {
+          statusText = "AGUARDANDO SENHA";
+          statusType = "warn";
+        } else if (tx.status === TX_STATUS.DECLINED) {
+          statusText = "RECUSADO";
+          statusType = "bad";
+        }
+        setResultStatus(statusText, statusType);
+        elements.resultAmount.textContent = formatBRL(tx.valor);
+        elements.resultFuncionario.textContent = funcionario?.nome || tx.funcionarioId || "--";
+        elements.resultEmpresa.textContent = empresa?.nome || tx.empresaId || "--";
+        elements.resultPosto.textContent = posto?.nome || tx.postoId || "--";
+        elements.resultCombustivel.textContent = tx.combustivel || "--";
+        elements.resultPagamento.textContent = paymentSourceLabel(tx.paymentSource || tx.payment_source);
+        elements.resultHorario.textContent = formatTime(tx.timestamp);
+      }
+
+      function buildLocalRewardsFallbackPayload(userId) {
+        if (!userId) return null;
+        const txs = (Array.isArray(state.transacoes) ? state.transacoes : []).filter(
+          (tx) => tx && tx.funcionarioId === userId
+        );
+        let cashbackAvailable = 0;
+        let cashbackPending = 0;
+        let cashbackSpent = 0;
+        txs.forEach((tx) => {
+          const source = normalizePaymentSource(tx.paymentSource || tx.payment_source);
+          const valor = Number(tx.valor || 0);
+          if (!Number.isFinite(valor) || valor < 5) return;
+          if (source === "cashback") {
+            if (tx.status === TX_STATUS.CONFIRMED) {
+              cashbackSpent += Math.max(0, valor);
+            }
+            return;
+          }
+          if (source !== "credito") {
+            return;
+          }
+          const cashback = Math.max(0, valor * 0.015);
+          if (tx.status === TX_STATUS.CONFIRMED) {
+            cashbackAvailable += cashback;
+            return;
+          }
+          if (tx.status === TX_STATUS.PENDING) {
+            cashbackPending += cashback;
+          }
+        });
+        return {
+          balance: {
+            cashback_available: Math.max(0, cashbackAvailable - cashbackSpent),
+            cashback_pending: cashbackPending,
+          },
+        };
+      }
+
+      async function getCashbackAvailableForUser(userId) {
+        const fallback = buildLocalRewardsFallbackPayload(userId);
+        if (window.location.protocol === "file:") {
+          return Number(fallback?.balance?.cashback_available || 0);
+        }
+        try {
+          const response = await fetch(
+            `${API_REWARDS_BALANCE_URL}?user_id=${encodeURIComponent(userId)}&ts=${Date.now()}`,
+            {
+              cache: "no-store",
+              headers: { "Cache-Control": "no-cache" },
+            }
+          );
+          if (!response.ok) {
+            throw new Error(`status_${response.status}`);
+          }
+          const payload = await response.json();
+          if (!payload?.ok) {
+            throw new Error("invalid_payload");
+          }
+          return Number(payload?.balance?.cashback_available || 0);
+        } catch (error) {
+          return Number(fallback?.balance?.cashback_available || 0);
+        }
+      }
+
+      async function validateToken(rawToken, postoId) {
+        if (!postoId) {
+          return { ok: false, reason: "Selecione o posto antes de validar." };
+        }
+        const parts = rawToken.split(".");
+        if (parts.length !== 2) {
+          return { ok: false, reason: "Token invalido." };
+        }
+        let payload;
+        try {
+          payload = JSON.parse(base64Decode(parts[0]));
+        } catch (error) {
+          return { ok: false, reason: "Token corrompido." };
+        }
+        const signature = await signPayload(payload);
+        if (signature !== parts[1]) {
+          return { ok: false, reason: "Assinatura invalida." };
+        }
+        if (Date.now() > payload.ts + state.validadeMs) {
+          return { ok: false, reason: "QR expirado." };
+        }
+        if (state.usedTokens.has(rawToken)) {
+          return { ok: false, reason: "Token ja utilizado." };
+        }
+        if (payload.posto_id !== postoId) {
+          return { ok: false, reason: "Token gerado para outro posto." };
+        }
+        if (
+          !Object.prototype.hasOwnProperty.call(payload, "payment_source") &&
+          !Object.prototype.hasOwnProperty.call(payload, "paymentSource")
+        ) {
+          return { ok: false, reason: "Token sem forma de pagamento. Gere um novo QR." };
+        }
+        if (!payload.valor || payload.valor <= 0) {
+          return { ok: false, reason: "Valor invalido." };
+        }
+        const paymentSource = normalizePaymentSource(payload.payment_source || payload.paymentSource);
+        payload.payment_source = paymentSource;
+        payload.paymentSource = paymentSource;
+        if (paymentSource === "indefinido") {
+          return { ok: false, reason: "Forma de pagamento invalida no token." };
+        }
+        if (paymentSource === "cashback") {
+          const cashbackAvailable = await getCashbackAvailableForUser(payload.funcionario_id);
+          if (payload.valor > cashbackAvailable) {
+            return { ok: false, reason: "Cashback insuficiente." };
+          }
+        }
+        return { ok: true, payload };
+      }
+
+      function registrarTransacao(payload, rawToken, combustivel) {
+        const paymentSource = normalizePaymentSource(payload.payment_source || payload.paymentSource);
+        const tx = {
+          id: `TX-${Date.now().toString(36).toUpperCase()}`,
+          funcionarioId: payload.funcionario_id,
+          empresaId: payload.empresa_id,
+          postoId: payload.posto_id,
+          combustivel: combustivel || "",
+          paymentSource,
+          valor: payload.valor,
+          timestamp: new Date(payload.ts),
+          status: TX_STATUS.PENDING,
+          aprovadoEm: new Date().toISOString(),
+        };
+        state.transacoes.unshift(tx);
+        state.usedTokens.add(rawToken);
+        state.lastTxId = tx.id;
+        const funcionario = getFuncionario(tx.funcionarioId);
+        const posto = getPosto(tx.postoId);
+        logEvent(
+          "TRANSACAO_PENDENTE_CONFIRMACAO",
+          `${tx.id} - ${funcionario?.nome || "--"} - ${posto?.nome || "--"} - ${formatBRL(tx.valor)} - ${paymentSourceLabel(paymentSource)}`
+        );
+        if (window.location.protocol !== "file:" && paymentSource === "credito") {
+          fetch(API_REWARDS_EARN_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              user_id: tx.funcionarioId,
+              external_transaction_id: tx.id,
+              base_amount: tx.valor,
+              eligible_amount: tx.valor,
+              paid_at: tx.timestamp ? new Date(tx.timestamp).toISOString() : new Date().toISOString(),
+              merchant_id: tx.postoId || "",
+              source: "leitor",
+              created_by: "maquininha",
+              metadata: {
+                combustivel: tx.combustivel || "",
+                payment_source: paymentSource,
+                status_local: tx.status || TX_STATUS.PENDING,
+              },
+            }),
+          }).catch(() => {});
+        }
+        return tx;
+      }
+
+      function notifyPendingTx(tx) {
+        if (!tx) return;
+        try {
+          localStorage.setItem(LAST_TX_KEY, JSON.stringify({ id: tx.id, ts: Date.now() }));
+        } catch (error) {
+        }
+        if (broadcastTxChannel) {
+          broadcastTxChannel.postMessage({
+            type: "pending_tx",
+            txId: tx.id,
+            funcionarioId: tx.funcionarioId,
+            empresaId: tx.empresaId,
+            postoId: tx.postoId,
+          });
+        }
+      }
+
+      function renderTransacoes() {
+        elements.transacoesList.innerHTML = "";
+        const postoId = elements.leitorPosto.value;
+        const transacoes = postoId ? state.transacoes.filter((tx) => tx.postoId === postoId) : state.transacoes;
+        if (transacoes.length === 0) {
+          const empty = document.createElement("div");
+          empty.className = "list-item muted";
+          empty.textContent = "Sem transacoes registradas.";
+          elements.transacoesList.appendChild(empty);
+          return;
+        }
+        transacoes.slice(0, 6).forEach((tx) => {
+          const funcionario = getFuncionario(tx.funcionarioId);
+          const empresa = getEmpresa(tx.empresaId);
+          const paymentSource = normalizePaymentSource(tx.paymentSource || tx.payment_source);
+          let status = "Confirmada";
+          let statusClass = "ok";
+          if (tx.status === TX_STATUS.PENDING) {
+            status = "Pendente";
+            statusClass = "warn";
+          } else if (tx.status === TX_STATUS.DECLINED) {
+            status = "Recusado";
+            statusClass = "bad";
+          }
+          const row = document.createElement("div");
+          row.className = "list-item";
+          row.innerHTML = `<span>${funcionario?.nome || tx.funcionarioId} - ${empresa?.nome || tx.empresaId} | ${paymentSourceLabel(paymentSource)}</span><div><strong>${formatBRL(
+            tx.valor
+          )}</strong> <span class="status-tag ${statusClass}">${status}</span></div>`;
+          elements.transacoesList.appendChild(row);
+        });
+      }
+
+      function refreshStateUI() {
+        const currentPosto = elements.leitorPosto.value;
+        fillSelect(elements.leitorPosto, state.postos, (p) => p.nome, currentPosto);
+        applyInitialPosto();
+        applyPostoLock();
+        renderTransacoes();
+        if (state.lastTxId) {
+          const tx = state.transacoes.find((entry) => entry.id === state.lastTxId);
+          if (tx) {
+            updateResultFromTx(tx);
+          }
+        }
+      }
+
+      async function handleValidate() {
+        const rawToken = elements.leitorToken.value.trim();
+        const combustivel = elements.leitorCombustivel ? elements.leitorCombustivel.value.trim() : "";
+        if (!rawToken) {
+          setMessage(elements.leitorMsg, "Cole o token para validar.", "bad");
+          return;
+        }
+        if (!combustivel) {
+          setMessage(elements.leitorMsg, "Selecione o tipo de combustivel.", "bad");
+          return;
+        }
+        await loadStateFromServer();
+        const postoId = elements.leitorPosto.value;
+        const result = await validateToken(rawToken, postoId);
+        if (!result.ok) {
+          setMessage(elements.leitorMsg, result.reason, "bad");
+          updateResult(null, "bad", "NEGADO");
+          return;
+        }
+        const tx = registrarTransacao(result.payload, rawToken, combustivel);
+        setMessage(elements.leitorMsg, "Transacao aprovada. Aguardando senha do colaborador.", "ok");
+        updateResult(result.payload, "warn", "AGUARDANDO SENHA", combustivel);
+        renderTransacoes();
+        await queueStateSave(true);
+        notifyPendingTx(tx);
+      }
+
+      function clearToken() {
+        elements.leitorToken.value = "";
+        setMessage(elements.leitorMsg, "", "muted");
+        resetResult();
+      }
+
+      function handleScannerResult(value) {
+        if (!value) return;
+        const now = Date.now();
+        if (state.scanner.lastValue === value && now < state.scanner.cooldownUntil) {
+          return;
+        }
+        state.scanner.lastValue = value;
+        state.scanner.cooldownUntil = now + 1500;
+        elements.leitorToken.value = value;
+        setMessage(elements.scannerMsg, "QR lido. Token preenchido.", "ok");
+        setScannerStatus("QR detectado", "ok");
+      }
+
+      function scanFrame() {
+        if (!state.scanner.active) return;
+        const video = elements.scannerVideo;
+        const canvas = elements.scannerCanvas;
+        if (!video || !canvas || !window.jsQR) return;
+        const ctx = canvas.getContext("2d");
+        if (video.readyState >= 2) {
+          const width = video.videoWidth;
+          const height = video.videoHeight;
+          if (width && height) {
+            if (canvas.width !== width || canvas.height !== height) {
+              canvas.width = width;
+              canvas.height = height;
+            }
+            ctx.drawImage(video, 0, 0, width, height);
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const result = window.jsQR(imageData.data, width, height, { inversionAttempts: "attemptBoth" });
+            if (result && result.data) {
+              handleScannerResult(result.data.trim());
+            }
+          }
+        }
+        state.scanner.rafId = requestAnimationFrame(scanFrame);
+      }
+
+      async function startScanner() {
+        if (!navigator.mediaDevices?.getUserMedia) {
+          setScannerStatus("Camera indisponivel", "bad");
+          setMessage(elements.scannerMsg, "Camera nao suportada neste navegador.", "bad");
+          return;
+        }
+        if (!window.jsQR) {
+          setScannerStatus("Leitor indisponivel", "bad");
+          setMessage(elements.scannerMsg, "Leitor nao carregado. Recarregue a pagina.", "bad");
+          return;
+        }
+        if (state.scanner.active) return;
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { ideal: "environment" } },
+            audio: false,
+          });
+          state.scanner.stream = stream;
+          elements.scannerVideo.srcObject = stream;
+          await elements.scannerVideo.play();
+          state.scanner.active = true;
+          state.scanner.lastValue = "";
+          state.scanner.cooldownUntil = 0;
+          setScannerControls(true);
+          setScannerStatus("Camera ativa", "ok");
+          setMessage(elements.scannerMsg, "Aponte para o QR para ler.", "muted");
+          scanFrame();
+        } catch (error) {
+          setScannerControls(false);
+          setScannerStatus("Camera bloqueada", "bad");
+          const hint =
+            window.location.protocol === "file:"
+              ? "Abra em servidor local (http://localhost) para usar a camera."
+              : "Permissao de camera negada ou indisponivel.";
+          setMessage(elements.scannerMsg, hint, "bad");
+        }
+      }
+
+      function stopScanner() {
+        if (state.scanner.rafId) {
+          cancelAnimationFrame(state.scanner.rafId);
+          state.scanner.rafId = null;
+        }
+        if (state.scanner.stream) {
+          state.scanner.stream.getTracks().forEach((track) => track.stop());
+          state.scanner.stream = null;
+        }
+        elements.scannerVideo.srcObject = null;
+        state.scanner.active = false;
+        setScannerControls(false);
+        setScannerStatus("Camera desligada", "warn");
+      }
+
+      function handleScannerFile(event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        if (!window.jsQR) {
+          setScannerStatus("Leitor indisponivel", "bad");
+          setMessage(elements.scannerMsg, "Leitor nao carregado. Recarregue a pagina.", "bad");
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = elements.scannerCanvas;
+            const ctx = canvas.getContext("2d");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0, img.width, img.height);
+            const imageData = ctx.getImageData(0, 0, img.width, img.height);
+            const result = window.jsQR(imageData.data, img.width, img.height, { inversionAttempts: "attemptBoth" });
+            if (result && result.data) {
+              handleScannerResult(result.data.trim());
+            } else {
+              setScannerStatus("QR nao encontrado", "warn");
+              setMessage(elements.scannerMsg, "Nenhum QR encontrado na imagem.", "bad");
+            }
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+        event.target.value = "";
+      }
+
+      async function loadStateFromServer() {
+        if (window.location.protocol === "file:") {
+          const changed = loadStateFromStorage();
+          setMessage(elements.scannerMsg, "Modo arquivo: use leitura por imagem.", "warn");
+          return changed;
+        }
+        const beforeSignature = getStateSignature();
+        try {
+          const response = await fetch(`${API_STATE_URL}?ts=${Date.now()}`, {
+            cache: "no-store",
+            headers: { "Cache-Control": "no-cache" },
+          });
+          if (!response.ok) {
+            return loadStateFromStorage();
+          }
+          const payload = await response.json();
+          if (payload && payload.data) {
+            applyStateSnapshot(payload.data);
+            saveStateToStorage(JSON.stringify(payload.data));
+            return beforeSignature !== getStateSignature();
+          } else {
+            return loadStateFromStorage();
+          }
+        } catch (error) {
+          return loadStateFromStorage();
+        }
+      }
+
+      let syncTimer = null;
+      let syncInProgress = false;
+
+      function startRealtimeSync() {
+        if (syncTimer) {
+          clearInterval(syncTimer);
+          syncTimer = null;
+        }
+        if (window.location.protocol === "file:") return;
+        syncTimer = setInterval(async () => {
+          if (syncInProgress || document.hidden) return;
+          syncInProgress = true;
+          try {
+            const changed = await loadStateFromServer();
+            if (changed) {
+              refreshStateUI();
+            }
+          } finally {
+            syncInProgress = false;
+          }
+        }, REALTIME_SYNC_MS);
+      }
+
+      function handleLogout() {
+        stopScanner();
+        try {
+          sessionStorage.removeItem("maquininhaCodigo");
+          sessionStorage.removeItem("maquininhaPostoId");
+        } catch (error) {
+        }
+        window.location.replace(`../login.html?v=${encodeURIComponent(APP_BUILD_VERSION)}`);
+      }
+
+      function init() {
+        refreshStateUI();
+        if (elements.logoutBtn) {
+          elements.logoutBtn.addEventListener("click", handleLogout);
+        }
+        elements.validarToken.addEventListener("click", handleValidate);
+        elements.limparToken.addEventListener("click", clearToken);
+        if (!elements.leitorPosto.disabled) {
+          elements.leitorPosto.addEventListener("change", () => {
+            clearToken();
+            setMessage(elements.leitorMsg, "Posto atualizado. Leia um novo QR.", "muted");
+            try {
+              sessionStorage.setItem("maquininhaPostoId", elements.leitorPosto.value);
+            } catch (error) {
+              return;
+            }
+          });
+        }
+        elements.scannerStart.addEventListener("click", startScanner);
+        elements.scannerStop.addEventListener("click", stopScanner);
+        elements.scannerFile.addEventListener("change", handleScannerFile);
+        window.addEventListener("beforeunload", stopScanner);
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) return;
+          loadStateFromServer().then((changed) => {
+            if (changed) {
+              refreshStateUI();
+            }
+          });
+        });
+        resetResult();
+      }
+
+      forceBuildRefreshIfNeeded();
+
+      loadStateFromServer().then((changed) => {
+        if (changed) {
+          refreshStateUI();
+        }
+        startRealtimeSync();
+      });
+
+      init();
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", async () => {
+          try {
+            const registration = await navigator.serviceWorker.register(
+              `../service-worker.js?v=${APP_BUILD_VERSION}`,
+              { updateViaCache: "none" }
+            );
+            await registration.update();
+          } catch (error) {
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
+
+
+
+
+
