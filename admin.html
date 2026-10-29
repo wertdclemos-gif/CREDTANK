@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin | CredTank</title>
+    <link rel="icon" href="assets/credtank-logo.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1aa06d" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <meta http-equiv="refresh" content="0; url=portal/app.html?role=admin" />
+  </head>
+  <body>
+    <div class="card">
+      <img src="assets/Logo.png" alt="CredTank" />
+      <h1>Redirecionando para o admin</h1>
+      <p>Se nao abrir automaticamente, clique no botao abaixo.</p>
+      <div class="actions">
+        <a class="btn primary" href="portal/app.html?role=admin">Abrir admin</a>
+        <a class="btn" id="back-to-site-link" href="index.html">Voltar ao site</a>
+      </div>
+    </div>
+    <script src="assets/pt-br-fix.js"></script>
+    <script>
+      const isAndroidWebViewApp = /CredTankAndroid\/1\.0/i.test(navigator.userAgent || "");
+      if (isAndroidWebViewApp) {
+        const back = document.getElementById("back-to-site-link");
+        if (back) back.style.display = "none";
+      }
+      window.location.replace("portal/app.html?role=admin");
+    </script>
+  </body>
+</html>
+

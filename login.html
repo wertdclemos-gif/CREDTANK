@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Login | CredTank</title>
+    <link rel="icon" href="assets/credtank-logo.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1aa06d" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="entry-page">
+    <main class="entry-shell">
+      <section class="entry-hero">
+        <div class="entry-brand">
+          <img src="assets/Logo.png" alt="CredTank" />
+          <span>CREDTANK <small class="entry-version">v2026-08-18.2</small></span>
+        </div>
+        <span class="entry-badge">Acesso seguro CredTank</span>
+        <h1>Gestao de abastecimento em um unico ambiente.</h1>
+        <p>Selecione seu perfil para continuar com seguranca, rastreabilidade e fluxo rapido de operacao.</p>
+      </section>
+
+      <section class="entry-card">
+        <div>
+          <h2>Escolha seu acesso</h2>
+          <p class="entry-sub">Entre com o perfil correto para continuar.</p>
+        </div>
+        <div class="login-actions">
+          <a class="login-option primary" href="portal/app.html?role=funcionario&v=2026-08-18.2">
+            <span class="option-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  fill="currentColor"
+                  d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5Z"
+                />
+              </svg>
+            </span>
+            <span class="option-text">
+              <span class="option-title">Acesso colaborador</span>
+              <span class="option-meta">Saldo, QR e extrato no celular</span>
+            </span>
+            <span class="option-arrow" aria-hidden="true">&gt;</span>
+          </a>
+
+          <a class="login-option" href="portal/app.html?role=empresa&v=2026-08-18.2">
+            <span class="option-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  fill="currentColor"
+                  d="M3 20h18v-2H3Zm2-4h4V4H5Zm5 0h4V8h-4Zm5 0h4V6h-4Z"
+                />
+              </svg>
+            </span>
+            <span class="option-text">
+              <span class="option-title">Acesso corporativo</span>
+              <span class="option-meta">Empresa, admin, limites e relatorios</span>
+            </span>
+            <span class="option-arrow" aria-hidden="true">&gt;</span>
+          </a>
+
+          <a class="login-option" href="maquininha.html">
+            <span class="option-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  fill="currentColor"
+                  d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm1 4v3h10V6Zm0 5v2h3v-2Zm4 0v2h3v-2Zm4 0v2h2v-2Z"
+                />
+              </svg>
+            </span>
+            <span class="option-text">
+              <span class="option-title">Acesso maquininha</span>
+              <span class="option-meta">Validacao e confirmacao no posto</span>
+            </span>
+            <span class="option-arrow" aria-hidden="true">&gt;</span>
+          </a>
+        </div>
+        <div class="entry-actions" id="entry-actions">
+          <button class="btn primary small app-install hidden" id="install-app-btn" type="button">Instalar aplicativo</button>
+          <a class="btn small" id="back-to-site-link" href="index.html?mobile=site">Voltar ao site</a>
+        </div>
+        <p class="install-message hidden" id="install-app-message"></p>
+      </section>
+    </main>
+    <script src="assets/pt-br-fix.js"></script>
+    <script>
+      function runEntryMobileAnimation() {
+        const userAgent = navigator.userAgent || "";
+        const mobileUa = /Android|iPhone|iPad|iPod|Mobile|wv/i.test(userAgent);
+        const isCompact = window.matchMedia ? window.matchMedia("(max-width: 900px)").matches : false;
+        const isCoarsePointer = window.matchMedia
+          ? window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(any-pointer: coarse)").matches
+          : false;
+        const noHover = window.matchMedia
+          ? window.matchMedia("(hover: none)").matches || window.matchMedia("(any-hover: none)").matches
+          : false;
+        const isMobile = isCompact && (isCoarsePointer || noHover || mobileUa);
+        if (!isMobile) return;
+        document.body.classList.add("entry-mobile-animating");
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            document.body.classList.add("entry-mobile-ready");
+          });
+        });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", runEntryMobileAnimation, { once: true });
+      } else {
+        runEntryMobileAnimation();
+      }
+
+      const isAndroidWebViewApp = /CredTankAndroid\/1\.0/i.test(navigator.userAgent || "");
+      if (isAndroidWebViewApp) {
+        const backLink = document.getElementById("back-to-site-link");
+        const entryActions = document.getElementById("entry-actions");
+        if (backLink) backLink.style.display = "none";
+        if (entryActions) entryActions.style.display = "none";
+      }
+
+      let deferredInstallPrompt = null;
+      const installButton = document.getElementById("install-app-btn");
+      const installMessage = document.getElementById("install-app-message");
+      const isStandalone =
+        window.matchMedia?.("(display-mode: standalone)")?.matches || window.navigator.standalone === true;
+
+      function setInstallMessage(text) {
+        if (!installMessage) return;
+        installMessage.textContent = text || "";
+        installMessage.classList.toggle("hidden", !text);
+      }
+
+      function showInstallButton() {
+        if (!installButton || isStandalone || isAndroidWebViewApp) return;
+        installButton.classList.remove("hidden");
+      }
+
+      window.addEventListener("beforeinstallprompt", (event) => {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        showInstallButton();
+        setInstallMessage("");
+      });
+
+      window.addEventListener("appinstalled", () => {
+        deferredInstallPrompt = null;
+        if (installButton) installButton.classList.add("hidden");
+        setInstallMessage("Aplicativo instalado.");
+      });
+
+      if (installButton) {
+        const mobileBrowser = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "");
+        if (mobileBrowser) {
+          showInstallButton();
+        }
+        installButton.addEventListener("click", async () => {
+          if (deferredInstallPrompt) {
+            deferredInstallPrompt.prompt();
+            const choice = await deferredInstallPrompt.userChoice.catch(() => null);
+            deferredInstallPrompt = null;
+            if (choice?.outcome === "accepted") {
+              installButton.classList.add("hidden");
+              setInstallMessage("Aplicativo instalado.");
+            } else {
+              setInstallMessage("Instalacao cancelada.");
+            }
+            return;
+          }
+          const ua = navigator.userAgent || "";
+          if (/iPhone|iPad|iPod/i.test(ua)) {
+            setInstallMessage("No Safari, use Compartilhar e Adicionar a Tela de Inicio.");
+            return;
+          }
+          setInstallMessage("No Chrome, abra o menu e toque em Instalar app.");
+        });
+      }
+      if ("serviceWorker" in navigator && !isAndroidWebViewApp) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("service-worker.js?v=2026-08-18.2");
+        });
+      } else if ("serviceWorker" in navigator && isAndroidWebViewApp) {
+        navigator.serviceWorker.getRegistrations().then((regs) => {
+          regs.forEach((reg) => reg.unregister());
+        }).catch(() => {});
+      }
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
