@@ -1,0 +1,23 @@
+# Private runtime configuration
+.env
+.env.*
+!.env.example
+/api/config.local.php
+# Production data, exports and backups
+*.sql
+!/database/app_devices_registry.sql
+*.sqlite*
+*.db
+*.log
+*.zip
+*.bak
+*.old
+*~
+/backups/
+/exports/
+/uploads/
+/api/status.json
+# Tools and operating system files
+node_modules/
+.DS_Store
+Thumbs.db

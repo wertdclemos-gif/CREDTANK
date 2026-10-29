@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maquininha | CredTank</title>
+    <link rel="icon" href="assets/credtank-logo.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1aa06d" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .form {
+        display: grid;
+        gap: 12px;
+        text-align: left;
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+      }
+
+      .field label {
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      .field input,
+      .field select {
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--stroke);
+        font-family: inherit;
+        font-size: 14px;
+      }
+
+      .field input[readonly] {
+        background: rgba(15, 23, 42, 0.04);
+        color: var(--muted);
+      }
+
+      .password-field {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .password-field input {
+        width: 100%;
+        padding-right: 46px;
+      }
+
+      .password-toggle {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 34px;
+        height: 34px;
+        border: none;
+        background: transparent;
+        color: var(--muted);
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+      }
+
+      .password-toggle svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .password-toggle .eye-off {
+        display: none;
+      }
+
+      .password-toggle.active .eye-on {
+        display: none;
+      }
+
+      .password-toggle.active .eye-off {
+        display: inline-block;
+      }
+
+      .password-toggle:focus-visible {
+        outline: 2px solid rgba(26, 160, 109, 0.5);
+        outline-offset: 2px;
+      }
+
+      .message {
+        font-size: 13px;
+        color: var(--muted);
+        min-height: 18px;
+        text-align: center;
+      }
+
+      .message.ok {
+        color: var(--accent-strong);
+      }
+
+      .message.bad {
+        color: #d64545;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <img src="assets/Logo.png" alt="CredTank" />
+      <h1>Acesso da maquininha</h1>
+      <p>Informe o codigo da maquininha e o acesso para iniciar a leitura.</p>
+      <form class="form" id="maquininha-form">
+        <div class="field">
+          <label for="codigo-input">Codigo da maquininha</label>
+          <input id="codigo-input" type="text" placeholder="Ex: MQ-1001" required />
+        </div>
+        <div class="field">
+          <label for="posto-input">Posto selecionado</label>
+          <input id="posto-input" type="text" placeholder="--" readonly />
+        </div>
+        <div class="field">
+          <label for="pin-input">Codigo de acesso</label>
+          <div class="password-field">
+            <input
+              id="pin-input"
+              type="password"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              placeholder="Ex: 1234"
+            />
+            <button
+              class="password-toggle"
+              type="button"
+              data-target="pin-input"
+              aria-label="Exibir senha"
+              title="Exibir senha"
+            >
+              <svg class="eye-on" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  fill="currentColor"
+                  d="M12 5c-5 0-9 4.5-10 7 1 2.5 5 7 10 7s9-4.5 10-7c-1-2.5-5-7-10-7Zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-2.2a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6Z"
+                />
+              </svg>
+              <svg class="eye-off" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  fill="currentColor"
+                  d="M4.6 3.2 21 19.6l-1.4 1.4-3.2-3.2a10.8 10.8 0 0 1-4.4 1c-5 0-9-4.5-10-7a12.8 12.8 0 0 1 4.7-5.5L3.2 4.6 4.6 3.2Zm5.4 5.4 6.2 6.2a4 4 0 0 1-6.2-6.2Zm2-5.6c5 0 9 4.5 10 7a12.6 12.6 0 0 1-3.3 4.3l-1.5-1.5A8.4 8.4 0 0 0 20 12c-1-2-4.5-5-8-5-1 0-2 .2-3 .5L7.5 6A10.6 10.6 0 0 1 12 3Z"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" type="submit">Entrar na maquininha</button>
+          <a class="btn" href="login.html?v=2026-08-18.2">Sair</a>
+        </div>
+      </form>
+      <div class="message" id="login-msg"></div>
+    </div>
+    <script src="assets/pt-br-fix.js"></script>
+    <script>
+      const API_STATE_URL = "api/state.php";
+      const demoParam = new URLSearchParams(window.location.search).get("demo");
+      const demoValue = String(demoParam || "").toLowerCase();
+      const isLocalHost =
+        window.location.protocol === "file:" ||
+        ["localhost", "127.0.0.1"].includes(window.location.hostname);
+      const DEMO_MODE = false;
+      const APP_BUILD_VERSION = "2026-10-02.5";
+      const LOCAL_TEST_POSTO = {};
+      const DEFAULT_POSTOS = [];
+      function normalizeCodigo(value) {
+        return String(value || "").trim().toUpperCase();
+      }
+
+      function forceBuildRefreshIfNeeded() {
+        try {
+          const key = "credtank-build-version";
+          const current = localStorage.getItem(key);
+          if (current === APP_BUILD_VERSION) return;
+          localStorage.setItem(key, APP_BUILD_VERSION);
+          if ("serviceWorker" in navigator && navigator.serviceWorker.getRegistrations) {
+            navigator.serviceWorker.getRegistrations().then((regs) => {
+              regs.forEach((reg) => reg.update());
+            });
+          }
+        } catch (error) {
+        }
+      }
+
+      function ensureLocalTestPostoList(list) {
+        const safe = Array.isArray(list) ? [...list] : [];
+        if (!DEMO_MODE) return safe;
+        const localCode = normalizeCodigo(LOCAL_TEST_POSTO.codigoMaquininha);
+        const index = safe.findIndex((posto) => {
+          const code = normalizeCodigo(posto?.codigoMaquininha);
+          const id = normalizeCodigo(posto?.id);
+          return code === localCode || id === normalizeCodigo(LOCAL_TEST_POSTO.id);
+        });
+        if (index >= 0) {
+          safe[index] = { ...safe[index], ...LOCAL_TEST_POSTO };
+        } else {
+          safe.push({ ...LOCAL_TEST_POSTO });
+        }
+        return safe;
+      }
+
+      let postos = ensureLocalTestPostoList(DEMO_MODE ? DEFAULT_POSTOS : []);
+
+      const elements = {
+        form: document.getElementById("maquininha-form"),
+        codigoInput: document.getElementById("codigo-input"),
+        postoInput: document.getElementById("posto-input"),
+        pinInput: document.getElementById("pin-input"),
+        loginMsg: document.getElementById("login-msg"),
+      };
+
+      function setMessage(text, type = "muted") {
+        elements.loginMsg.textContent = text;
+        elements.loginMsg.className = `message ${type}`;
+      }
+
+      function setupPasswordToggles() {
+        const toggles = document.querySelectorAll(".password-toggle");
+        toggles.forEach((toggle) => {
+          const targetId = toggle.dataset.target;
+          if (!targetId) return;
+          const input = document.getElementById(targetId);
+          if (!input) return;
+          toggle.addEventListener("click", () => {
+            const reveal = input.type === "password";
+            input.type = reveal ? "text" : "password";
+            toggle.classList.toggle("active", reveal);
+            const label = reveal ? "Ocultar senha" : "Exibir senha";
+            toggle.setAttribute("aria-label", label);
+            toggle.setAttribute("title", label);
+          });
+        });
+      }
+
+      function getPostoByCodigo(codigo) {
+        const normalized = normalizeCodigo(codigo);
+        if (!normalized) return null;
+        return postos.find((posto) => {
+          const code = normalizeCodigo(posto.codigoMaquininha);
+          const id = normalizeCodigo(posto.id);
+          return code === normalized || id === normalized;
+        });
+      }
+
+      function updatePostoPreview(codigo) {
+        const posto = getPostoByCodigo(codigo);
+        elements.postoInput.value = posto ? posto.nome : "--";
+        return posto;
+      }
+
+      function getStoredCodigo() {
+        try {
+          return (
+            sessionStorage.getItem("maquininhaCodigo") ||
+            sessionStorage.getItem("maquininhaPostoId") ||
+            ""
+          );
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function applyStoredCodigo() {
+        const storedCodigo = getStoredCodigo();
+        if (storedCodigo && !elements.codigoInput.value) {
+          elements.codigoInput.value = storedCodigo;
+        }
+        if (DEMO_MODE && !elements.codigoInput.value) {
+          elements.codigoInput.value = LOCAL_TEST_POSTO.codigoMaquininha;
+        }
+        if (DEMO_MODE && !elements.pinInput.value) {
+          elements.pinInput.value = LOCAL_TEST_POSTO.codigoAcesso;
+        }
+        updatePostoPreview(elements.codigoInput.value);
+      }
+
+      async function loadPostos() {
+        if (window.location.protocol === "file:") {
+          if (DEMO_MODE) {
+            postos = ensureLocalTestPostoList(DEFAULT_POSTOS);
+            applyStoredCodigo();
+            setMessage("Modo arquivo: lista fixa de postos.", "muted");
+          } else {
+            postos = ensureLocalTestPostoList([]);
+            applyStoredCodigo();
+            setMessage("Modo arquivo sem dados. Cadastre postos no portal.", "warn");
+          }
+          return;
+        }
+        let loaded = false;
+        try {
+          const response = await fetch(API_STATE_URL, { cache: "no-store" });
+          if (!response.ok) {
+            throw new Error("Falha ao carregar.");
+          }
+          const payload = await response.json();
+          const fetchedPostos = payload?.data?.postos;
+          if (Array.isArray(fetchedPostos) && fetchedPostos.length) {
+            postos = ensureLocalTestPostoList(fetchedPostos);
+            loaded = true;
+          }
+        } catch (error) {
+          setMessage("Nao foi possivel carregar os postos.", "bad");
+        }
+        if (loaded) {
+          applyStoredCodigo();
+          if (DEMO_MODE) {
+            setMessage(`Teste local: ${LOCAL_TEST_POSTO.codigoMaquininha} / ${LOCAL_TEST_POSTO.codigoAcesso}`, "ok");
+          }
+          return;
+        }
+        if (DEMO_MODE) {
+          postos = ensureLocalTestPostoList(DEFAULT_POSTOS);
+          setMessage("Nenhum posto encontrado. Usando base demo.", "muted");
+        } else {
+          postos = ensureLocalTestPostoList([]);
+          setMessage("Nenhum posto cadastrado. Cadastre no portal da empresa.", "warn");
+        }
+        applyStoredCodigo();
+        if (DEMO_MODE) {
+          setMessage(`Teste local: ${LOCAL_TEST_POSTO.codigoMaquininha} / ${LOCAL_TEST_POSTO.codigoAcesso}`, "ok");
+        }
+      }
+
+      elements.form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const codigo = elements.codigoInput.value.trim();
+        const posto = getPostoByCodigo(codigo);
+        const pin = elements.pinInput.value.trim();
+        if (!codigo) {
+          setMessage("Informe o codigo da maquininha.", "bad");
+          return;
+        }
+        if (!posto) {
+          setMessage("Codigo da maquininha nao encontrado.", "bad");
+          return;
+        }
+        if (!pin || pin.length < 4) {
+          setMessage("Informe o codigo de acesso da maquininha.", "bad");
+          return;
+        }
+        const acesso = String(posto.codigoAcesso || "").trim();
+        if (!acesso) {
+          setMessage("Codigo de acesso nao cadastrado para esta maquininha.", "bad");
+          return;
+        }
+        if (normalizeCodigo(pin) !== normalizeCodigo(acesso)) {
+          setMessage("Codigo de acesso incorreto.", "bad");
+          return;
+        }
+        try {
+          sessionStorage.setItem("maquininhaCodigo", codigo);
+          sessionStorage.setItem("maquininhaPostoId", posto.id);
+        } catch (error) {
+          return;
+        }
+        const params = new URLSearchParams();
+        params.set("posto", posto.id);
+        params.set("v", APP_BUILD_VERSION);
+        params.set("ts", Date.now().toString());
+        if (DEMO_MODE) {
+          params.set("demo", "1");
+        }
+        window.location.href = `portal/leitor.html?${params.toString()}`;
+      });
+
+      elements.codigoInput.addEventListener("input", () => {
+        updatePostoPreview(elements.codigoInput.value);
+      });
+
+      forceBuildRefreshIfNeeded();
+      setupPasswordToggles();
+      loadPostos();
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", async () => {
+          try {
+            const registration = await navigator.serviceWorker.register(
+              `service-worker.js?v=${APP_BUILD_VERSION}`,
+              { updateViaCache: "none" }
+            );
+            await registration.update();
+          } catch (error) {
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
+
+
+
+
+

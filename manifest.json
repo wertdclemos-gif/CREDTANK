@@ -1,0 +1,26 @@
+{
+  "name": "CredTank",
+  "short_name": "CredTank",
+  "description": "Aplicativo CredTank para colaboradores com controle de abastecimento, QR e relatorios.",
+  "id": "/credtank",
+  "start_url": "/login.html?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#f2f4f8",
+  "theme_color": "#0f8a6a",
+  "orientation": "portrait",
+  "categories": ["business", "finance"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
